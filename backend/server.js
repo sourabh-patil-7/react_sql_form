@@ -109,6 +109,27 @@ app.put("/update/:tableName/:recordId", (req, res) => {
   );
 });
 
+
+//to get the product based on the users input
+app.get("/product/:productId", (req, res) => {
+  const productId = req.params.productId;
+
+  const query = "SELECT * FROM products WHERE id = ?";
+
+  db.query(query, [productId], (err, results) => {
+    if (err) {
+      console.error("Error fetching product by ID:", err);
+      res.status(500).json({ error: "Internal Server Error" });
+    } else {
+      if (results.length === 0) {
+        res.status(404).json({ error: "Product not found" });
+      } else {
+        res.json(results[0]); // Assuming there's only one product with a given ID (primary key)
+      }
+    }
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 
-const TablePage = ({ match }) => {
+const TablePage = () => {
   const { tableName } = useParams();
   const [tableData, setTableData] = useState([]);
   const [editFormData, setEditFormData] = useState({});
   const [editingRecordId, setEditingRecordId] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     fetchData();
@@ -63,19 +64,43 @@ const TablePage = ({ match }) => {
     }
   };
 
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
+  
+  const filteredTableData = tableData.filter((record) =>
+    String(record.id).includes(searchTerm)
+  );
+
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100 dark:bg-gray-800">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-800">
       <div className="w-full max-w-6xl p-8 bg-white dark:bg-gray-900 rounded-lg shadow-md">
-        <h2 className="text-3xl font-bold mb-4 text-gray-800 dark:text-gray-200">
-          {tableName} Table
-        </h2>
-        <Link to={`/table/${tableName}/insert`} className="block mt-4">
-          <button className="bg-blue-500 text-white px-4 py-2">Insert</button>
-        </Link>
-        <div className="overflow-x-auto shadow-md sm:rounded-lg mt-4 bg-white dark:bg-gray-900">
-          <table className="min-w-full border border-gray-300">
+        <div className="w-full items-center flex flex-col ">
+          <h2 className="text-3xl font-bold mb-4 text-gray-800 dark:text-gray-200">
+            {tableName} Table
+          </h2>
+          <div className="mb-4">
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={handleSearch}
+              className="border rounded p-2 dark:bg-gray-800 dark:text-gray-100"
+            />
+          </div>
+
+          <Link to={`/table/${tableName}/insert`} className="block mt-4">
+            <button className="bg-blue-500 text-white px-4 py-2">Insert</button>
+          </Link>
+        </div>
+
+        <div className="overflow-x-auto max-w-full p-8 bg-white dark:bg-gray-900 rounded-lg shadow-md">
+          <table className="w-full border border-gray-300">
             <thead>
               <tr className="text-left dark:text-gray-400">
+                <th className="px-6 py-3 bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
+                  ID
+                </th>
                 <th className="px-6 py-3 bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
                   Product name
                 </th>
@@ -91,8 +116,12 @@ const TablePage = ({ match }) => {
               </tr>
             </thead>
             <tbody>
-              {tableData.map((record, index) => (
+              {filteredTableData.map((record, index) => (
                 <tr key={index} className={`border-b dark:border-gray-700`}>
+                  <td className="px-6 py-4 whitespace-nowrap text-gray-800 dark:text-gray-100">
+                    {record.id}
+                  </td>
+
                   <td className="px-6 py-4 whitespace-nowrap text-gray-800 dark:text-gray-200">
                     {editingRecordId === record.id ? (
                       <input
@@ -176,3 +205,7 @@ const TablePage = ({ match }) => {
 };
 
 export default TablePage;
+
+
+
+
