@@ -6,16 +6,18 @@ const cors = require("cors");
 
 const app = express();
 const PORT = 3001; // Change this to your desired port
+// taking the host , user, password, database from .env file
+require('dotenv').config()
 
 app.use(cors());
 app.use(bodyParser.json());
 
 // Replace these with your MySQL connection details
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "root123",
-  database: "ads_lab",
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_database,
 });
 
 db.connect((err) => {
